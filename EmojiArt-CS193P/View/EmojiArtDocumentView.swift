@@ -29,6 +29,7 @@ struct EmojiArtDocumentView: View {
                         .scaleEffect(zoomScale)
                         .position(convertFromEmojiCoords((0,0), in: geometry))
                 )
+                .clipped()
                 .gesture(doubleTapToZoom(in: geometry.size))
                 if document.backgroundImageFetchStatus == .fetching {
                     ProgressView()
@@ -45,6 +46,7 @@ struct EmojiArtDocumentView: View {
             .onDrop(of: [.plainText, .url, .image], isTargeted: nil) { providers, location in
                 return drop(providers: providers, at: location, in: geometry)
             }
+            .gesture(panGesture().simultaneously(with: zoomGesture()))
         }
     }
   
@@ -87,8 +89,8 @@ struct EmojiArtDocumentView: View {
         let frame = geometry.frame(in: .local)
         let frameCenter = CGPoint(x: frame.midX, y: frame.midY)
         let convertedCoord = CGPoint(
-            x: frameCenter.x + CGFloat(location.x) * zoomScale,
-            y: frameCenter.y + CGFloat(location.y) * zoomScale
+            x: frameCenter.x + CGFloat(location.x) * zoomScale + panOffset.width,
+            y: frameCenter.y + CGFloat(location.y) * zoomScale + panOffset.height
         )
         return convertedCoord
     }
@@ -96,20 +98,56 @@ struct EmojiArtDocumentView: View {
     private func convertToEmojiCoords(_ location: CGPoint, in geometry: GeometryProxy) -> (x: Int,  y: Int) {
         let frame = geometry.frame(in: .local)
         let frameCenter = CGPoint(x: frame.midX, y: frame.midY)
-        let x = CGFloat(location.x) - frameCenter.x / zoomScale
-        let y = CGFloat(location.y) - frameCenter.y / zoomScale
+        let x = (CGFloat(location.x) - panOffset.width - frameCenter.x) / zoomScale
+        let y = (CGFloat(location.y) - panOffset.height - frameCenter.y) / zoomScale
         return (Int(x), Int(y))
     }
     
     //MARK: - Backgroud Image Adjustments
-    @State private var zoomScale: CGFloat = 1
     private func zoomToFit(_ image: UIImage?, in size: CGSize) {
         if let image = image, image.size.width > 0, image.size.height > 0, size.width > 0, size.height > 0 {
             let hZoom = size.width / image.size.width
             let vZoom = size.height / image.size.height
-            zoomScale = min(hZoom, vZoom)
+            idleZoomScale = min(hZoom, vZoom)
+            idlePanOffset = CGSize.zero
         }
     }
+    
+    //MARK: - Gestures
+    @State private var idleZoomScale: CGFloat = 1
+    @GestureState private var pinchGestureZoomScale: CGFloat = 1
+    private var zoomScale: CGFloat {
+        idleZoomScale * pinchGestureZoomScale
+    }
+    
+    @State private var idlePanOffset: CGSize = CGSize.zero
+    @GestureState private var gesturePanOffset: CGSize = CGSize.zero
+    private var panOffset: CGSize {
+        let width = (idlePanOffset.width + gesturePanOffset.width) * zoomScale
+        let height = (idlePanOffset.height + gesturePanOffset.height) * zoomScale
+        return CGSize(width: width, height: height)
+    }
+    
+    private func panGesture() -> some Gesture {
+        DragGesture()
+            .onEnded { endPanValue in
+                idlePanOffset = idlePanOffset + (endPanValue.translation / zoomScale)
+            }
+            .updating($gesturePanOffset) { latestDragGestureValue, OurLinkedGestureState, _ in
+                OurLinkedGestureState = latestDragGestureValue.translation / zoomScale
+            }
+    }
+    
+    private func zoomGesture() -> some Gesture {
+        MagnificationGesture()
+            .onEnded { gestureEndScale in
+                idleZoomScale *= gestureEndScale
+            }
+            .updating($pinchGestureZoomScale) { latestGestureScale, OurLinkedGestureState, _ in
+                OurLinkedGestureState = latestGestureScale
+            }
+    }
+    
     
     private func doubleTapToZoom(in size: CGSize) -> some Gesture{
         TapGesture(count: 2)
