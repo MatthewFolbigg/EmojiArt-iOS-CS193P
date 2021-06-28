@@ -26,8 +26,10 @@ struct EmojiArtDocumentView: View {
             ZStack {
                 Color.white.overlay(
                     backgroundImage(image: document.backgroundImage)
+                        .scaleEffect(zoomScale)
                         .position(convertFromEmojiCoords((0,0), in: geometry))
                 )
+                .gesture(doubleTapToZoom(in: geometry.size))
                 if document.backgroundImageFetchStatus == .fetching {
                     ProgressView()
                         .scaleEffect(4)
@@ -35,6 +37,7 @@ struct EmojiArtDocumentView: View {
                     ForEach(document.emojis) {emoji in
                         Text(emoji.text)
                             .font(.system(size: fontSize(for: emoji)))
+                            .scaleEffect(zoomScale)
                             .position(position(for: emoji, in: geometry))
                     }
                 }
@@ -63,7 +66,8 @@ struct EmojiArtDocumentView: View {
                     document.addEmoji(
                         String(emoji),
                         at: convertToEmojiCoords(location, in: geometry),
-                        size: defaultEmojiFontSize)
+                        size: defaultEmojiFontSize / zoomScale
+                    )
                 }
             }
         }
@@ -83,8 +87,8 @@ struct EmojiArtDocumentView: View {
         let frame = geometry.frame(in: .local)
         let frameCenter = CGPoint(x: frame.midX, y: frame.midY)
         let convertedCoord = CGPoint(
-            x: frameCenter.x + CGFloat(location.x),
-            y: frameCenter.y + CGFloat(location.y)
+            x: frameCenter.x + CGFloat(location.x) * zoomScale,
+            y: frameCenter.y + CGFloat(location.y) * zoomScale
         )
         return convertedCoord
     }
@@ -92,9 +96,28 @@ struct EmojiArtDocumentView: View {
     private func convertToEmojiCoords(_ location: CGPoint, in geometry: GeometryProxy) -> (x: Int,  y: Int) {
         let frame = geometry.frame(in: .local)
         let frameCenter = CGPoint(x: frame.midX, y: frame.midY)
-        let x = CGFloat(location.x) - frameCenter.x
-        let y = CGFloat(location.y) - frameCenter.y
+        let x = CGFloat(location.x) - frameCenter.x / zoomScale
+        let y = CGFloat(location.y) - frameCenter.y / zoomScale
         return (Int(x), Int(y))
+    }
+    
+    //MARK: - Backgroud Image Adjustments
+    @State private var zoomScale: CGFloat = 1
+    private func zoomToFit(_ image: UIImage?, in size: CGSize) {
+        if let image = image, image.size.width > 0, image.size.height > 0, size.width > 0, size.height > 0 {
+            let hZoom = size.width / image.size.width
+            let vZoom = size.height / image.size.height
+            zoomScale = min(hZoom, vZoom)
+        }
+    }
+    
+    private func doubleTapToZoom(in size: CGSize) -> some Gesture{
+        TapGesture(count: 2)
+            .onEnded {
+                withAnimation {
+                    zoomToFit(document.backgroundImage, in: size)
+                }
+            }
     }
     
     //MARK: - Emoji Palette
