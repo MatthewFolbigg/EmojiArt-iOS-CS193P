@@ -24,28 +24,50 @@ struct EmojiArtDocumentView: View {
     var documentBody: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.yellow //Placeholder for background
-                ForEach(document.emojis) {emoji in
-                    Text(emoji.text)
-                        .font(.system(size: fontSize(for: emoji)))
-                        .position(position(for: emoji, in: geometry))
+                Color.white.overlay(
+                    backgroundImage(image: document.backgroundImage)
+                        .position(convertFromEmojiCoords((0,0), in: geometry))
+                )
+                if document.backgroundImageFetchStatus == .fetching {
+                    ProgressView()
+                        .scaleEffect(4)
+                } else {
+                    ForEach(document.emojis) {emoji in
+                        Text(emoji.text)
+                            .font(.system(size: fontSize(for: emoji)))
+                            .position(position(for: emoji, in: geometry))
+                    }
                 }
             }
-            .onDrop(of: [.plainText], isTargeted: nil) { providers, location in
+            .onDrop(of: [.plainText, .url, .image], isTargeted: nil) { providers, location in
                 return drop(providers: providers, at: location, in: geometry)
             }
         }
     }
-    
+  
     private func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
-        providers.loadObjects(ofType: String.self) { string in
-            if let emoji = string.first, emoji.isEmoji {
-                document.addEmoji(
-                    String(emoji),
-                    at: convertToEmojiCoords(location, in: geometry),
-                    size: defaultEmojiFontSize)
+        var found = false
+        found = providers.loadObjects(ofType: URL.self) { url in
+            document.setBackground(.url(url.imageURL))
+        }
+        if !found {
+            found = providers.loadObjects(ofType: UIImage.self) { image in
+                if let data = image.jpegData(compressionQuality: 1.0) {
+                    document.setBackground(.imageData(data))
+                }
             }
         }
+        if !found {
+            found = providers.loadObjects(ofType: String.self) { string in
+                if let emoji = string.first, emoji.isEmoji {
+                    document.addEmoji(
+                        String(emoji),
+                        at: convertToEmojiCoords(location, in: geometry),
+                        size: defaultEmojiFontSize)
+                }
+            }
+        }
+        return found
     }
     
     private func fontSize(for emoji: EmojiArtModel.Emoji) -> CGFloat {
@@ -84,7 +106,15 @@ struct EmojiArtDocumentView: View {
 }
 
 
+struct backgroundImage: View {
+    var image: UIImage?
 
+    var body: some View {
+        if image != nil {
+            Image(uiImage: image!)
+        }
+    }
+}
 
 struct ScrollingEmojisView: View {
     let emojis: String
