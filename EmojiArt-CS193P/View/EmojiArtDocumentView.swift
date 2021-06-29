@@ -30,7 +30,7 @@ struct EmojiArtDocumentView: View {
                         .position(convertFromEmojiCoords((0,0), in: geometry))
                 )
                 .clipped()
-                .gesture(doubleTapToZoom(in: geometry.size))
+                .gesture(doubleTapToZoom(in: geometry.size).exclusively(before: tapToDeselectAll()))
                 if document.backgroundImageFetchStatus == .fetching {
                     ProgressView()
                         .scaleEffect(4)
@@ -38,9 +38,12 @@ struct EmojiArtDocumentView: View {
                     ForEach(document.emojis) {emoji in
                         Text(emoji.text)
                             .font(.system(size: fontSize(for: emoji)))
+                            .selectable(isSelected(emoji: emoji), size: fontSize(for: emoji))
                             .scaleEffect(zoomScale)
+                            .gesture(selectionGesture(emoji: emoji))
                             .position(position(for: emoji, in: geometry))
-                    }
+                        }
+                    
                 }
             }
             .onDrop(of: [.plainText, .url, .image], isTargeted: nil) { providers, location in
@@ -80,7 +83,8 @@ struct EmojiArtDocumentView: View {
         CGFloat(emoji.size)
     }
         
-    //MARK: Emoji Positioning
+    //MARK: - Emoji
+    //MARK: Positioning
     private func position(for emoji: EmojiArtModel.Emoji, in geometry: GeometryProxy) -> CGPoint {
         return convertFromEmojiCoords((emoji.x, emoji.y), in: geometry)
     }
@@ -103,6 +107,36 @@ struct EmojiArtDocumentView: View {
         return (Int(x), Int(y))
     }
     
+    //MARK: Selection
+    @State private var selectedEmoji: Set<EmojiArtModel.Emoji> = []
+    
+    func toggleSelection(for emoji: EmojiArtModel.Emoji) {
+        if selectedEmoji.contains(emoji) {
+            selectedEmoji.remove(emoji)
+        } else {
+            selectedEmoji.insert(emoji)
+        }
+    }
+    
+    func isSelected(emoji: EmojiArtModel.Emoji) -> Bool {
+        selectedEmoji.contains(emoji)
+    }
+    
+    func deselectAllEmoji() {
+        selectedEmoji = []
+    }
+    
+    //MARK: - Emoji Gestures
+    private func selectionGesture(emoji: EmojiArtModel.Emoji) -> some Gesture {
+        TapGesture(count: 1)
+            
+            .onEnded { _ in
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    toggleSelection(for: emoji)
+                }
+            }
+    }
+    
     //MARK: - Backgroud Image Adjustments
     private func zoomToFit(_ image: UIImage?, in size: CGSize) {
         if let image = image, image.size.width > 0, image.size.height > 0, size.width > 0, size.height > 0 {
@@ -113,7 +147,7 @@ struct EmojiArtDocumentView: View {
         }
     }
     
-    //MARK: - Gestures
+    //MARK: - Background Gestures
     @State private var idleZoomScale: CGFloat = 1
     @GestureState private var pinchGestureZoomScale: CGFloat = 1
     private var zoomScale: CGFloat {
@@ -154,6 +188,15 @@ struct EmojiArtDocumentView: View {
             .onEnded {
                 withAnimation {
                     zoomToFit(document.backgroundImage, in: size)
+                }
+            }
+    }
+    
+    private func tapToDeselectAll() -> some Gesture{
+        TapGesture(count: 1)
+            .onEnded {
+                withAnimation {
+                    deselectAllEmoji()
                 }
             }
     }
