@@ -16,7 +16,7 @@
 		1FA170DC268A397C008561F0 /* EmojiArtDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170DB268A397C008561F0 /* EmojiArtDocument.swift */; };
 		1FA170E0268A4625008561F0 /* UtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170DE268A4625008561F0 /* UtilityExtensions.swift */; };
 		1FA170E1268A4625008561F0 /* UtilityViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170DF268A4625008561F0 /* UtilityViews.swift */; };
-		1FA170E4268BB384008561F0 /* selected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E3268BB384008561F0 /* selected.swift */; };
+		1FA170E4268BB384008561F0 /* Selectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E3268BB384008561F0 /* Selectable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +31,7 @@
 		1FA170DB268A397C008561F0 /* EmojiArtDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiArtDocument.swift; sourceTree = "<group>"; };
 		1FA170DE268A4625008561F0 /* UtilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityExtensions.swift; sourceTree = "<group>"; };
 		1FA170DF268A4625008561F0 /* UtilityViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityViews.swift; sourceTree = "<group>"; };
-		1FA170E3268BB384008561F0 /* selected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selected.swift; sourceTree = "<group>"; };
+		1FA170E3268BB384008561F0 /* Selectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selectable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				1FA170C9268A363E008561F0 /* EmojiArtDocumentView.swift */,
-				1FA170E3268BB384008561F0 /* selected.swift */,
+				1FA170E3268BB384008561F0 /* Selectable.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -182,7 +182,7 @@
 			files = (
 				1FA170E1268A4625008561F0 /* UtilityViews.swift in Sources */,
 				1FA170CA268A363E008561F0 /* EmojiArtDocumentView.swift in Sources */,
-				1FA170E4268BB384008561F0 /* selected.swift in Sources */,
+				1FA170E4268BB384008561F0 /* Selectable.swift in Sources */,
 				1FA170C8268A363E008561F0 /* EmojiArt_CS193PApp.swift in Sources */,
 				1FA170E0268A4625008561F0 /* UtilityExtensions.swift in Sources */,
 				1FA170DC268A397C008561F0 /* EmojiArtDocument.swift in Sources */,
