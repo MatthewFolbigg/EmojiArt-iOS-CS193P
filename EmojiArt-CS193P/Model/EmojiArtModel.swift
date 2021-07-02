@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct EmojiArtModel {
+struct EmojiArtModel: Codable {
     
     var background: Background = Background.blank
     var emojis: [Emoji] = []
@@ -16,7 +16,7 @@ struct EmojiArtModel {
     
     //MARK: - Emoji
     //These are the emoji added to the canvas
-    struct Emoji: Identifiable, Hashable {
+    struct Emoji: Identifiable, Hashable, Codable {
         let text: String
         var x: Int
         var y: Int
@@ -40,6 +40,10 @@ struct EmojiArtModel {
     
     mutating func removeEmoji(_ emoji: Emoji) {
         emojis.remove(emoji)
+    }
+    
+    func json() throws -> Data {
+        return try JSONEncoder().encode(self)
     }
 }
 

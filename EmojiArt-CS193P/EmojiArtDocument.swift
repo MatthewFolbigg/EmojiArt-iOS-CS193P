@@ -10,11 +10,41 @@ import SwiftUI
 class EmojiArtDocument: ObservableObject {
     @Published private(set) var emojiArt: EmojiArtModel {
         didSet {
+            autoSave()
             if emojiArt.background != oldValue.background {
                 fetchBackgroundImageData()
             }
         }
     }
+    
+    private struct Autosave {
+        static let filename = "Autosaved.emojiart"
+        static var url: URL? {
+            let docDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            return docDirectory?.appendingPathComponent(filename)
+        }
+    }
+    
+    private func autoSave() {
+        if let url = Autosave.url {
+            save(to: url)
+        }
+    }
+    
+    //MARK: - Persistence
+    private func save(to url: URL) {
+        let thisFunc = "\(String(describing: self)).\(#function)"
+        do {
+            let data: Data = try emojiArt.json()
+            try data.write(to: url)
+        } catch let encodeError where encodeError is EncodingError {
+            print("Encoding Error: \(encodeError.localizedDescription)")
+        } catch {
+            print("\(thisFunc): \(error)")
+        }
+        
+    }
+    
         
     init() {
         emojiArt = EmojiArtModel()
