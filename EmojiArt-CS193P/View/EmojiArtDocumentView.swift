@@ -33,7 +33,7 @@ struct EmojiArtDocumentView: View {
                 .gesture(doubleTapToZoom(in: geometry.size).exclusively(before: tapToDeselectAll()))
                 if document.backgroundImageFetchStatus == .fetching {
                     ProgressView()
-                        .scaleEffect(4)
+                        .scaleEffect(2)
                 } else {
                     ForEach(document.emojis) {emoji in
                         Text(emoji.text)

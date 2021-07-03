@@ -10,33 +10,44 @@ import SwiftUI
 class EmojiArtDocument: ObservableObject {
     @Published private(set) var emojiArt: EmojiArtModel {
         didSet {
-            autoSave()
+            scheduleAutoSave()
             if emojiArt.background != oldValue.background {
                 fetchBackgroundImageData()
             }
         }
     }
     
+    //MARK: - Persistence
     private struct Autosave {
         static let filename = "Autosaved.emojiart"
         static var url: URL? {
             let docDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
             return docDirectory?.appendingPathComponent(filename)
         }
+        static let timeInterval = 4.0
     }
     
-    private func autoSave() {
+    private var autosaveTimer: Timer?
+    
+    private func scheduleAutoSave() {
+        autosaveTimer?.invalidate()
+        autosaveTimer = Timer.scheduledTimer(withTimeInterval: Autosave.timeInterval, repeats: false) { _ in
+            self.autosave()
+        }
+    }
+    
+    private func autosave() {
         if let url = Autosave.url {
             save(to: url)
         }
     }
     
-    //MARK: - Persistence
     private func save(to url: URL) {
         let thisFunc = "\(String(describing: self)).\(#function)"
         do {
             let data: Data = try emojiArt.json()
             try data.write(to: url)
+            print("Save Successful")
         } catch let encodeError where encodeError is EncodingError {
             print("Encoding Error: \(encodeError.localizedDescription)")
         } catch {
@@ -45,16 +56,21 @@ class EmojiArtDocument: ObservableObject {
         
     }
     
-        
+    //MARK: - Init
     init() {
-        emojiArt = EmojiArtModel()
-        //MARK: - TESTING
-        emojiArt.addEmoji("⌚️", at: (-200, -100), size: 80)
-        emojiArt.addEmoji("🔭", at: (-100, -50), size: 80)
-        emojiArt.addEmoji("🛴", at: (200, 100), size: 50)
-        //MARK: - TESTING END
+        if let url = Autosave.url, let autosavedEmojiArt = try? EmojiArtModel(fileUrl: url) {
+            emojiArt = autosavedEmojiArt
+            fetchBackgroundImageData()
+        } else {
+            emojiArt = EmojiArtModel()
+            //MARK: - TESTING
+            emojiArt.addEmoji("⌚️", at: (-200, -100), size: 80)
+            emojiArt.addEmoji("🔭", at: (-100, -50), size: 80)
+            emojiArt.addEmoji("🛴", at: (200, 100), size: 50)
+            //MARK: - TESTING END
+        }
     }
-    
+        
     //Convienience variables direct from model
     var emojis: [EmojiArtModel.Emoji] { emojiArt.emojis }
     var background: EmojiArtModel.Background { emojiArt.background }
@@ -62,6 +78,7 @@ class EmojiArtDocument: ObservableObject {
     @Published var backgroundImage: UIImage?
     @Published var backgroundImageFetchStatus: ImageFetchStatus = .idle
     
+    //MARK: Network
     enum ImageFetchStatus {
         case idle
         case fetching

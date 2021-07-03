@@ -14,6 +14,15 @@ struct EmojiArtModel: Codable {
     
     init() {}
     
+    init(json: Data) throws {
+        self = try JSONDecoder().decode(EmojiArtModel.self, from: json)
+    }
+    
+    init(fileUrl: URL) throws {
+        let data = try Data(contentsOf: fileUrl)
+        self = try EmojiArtModel(json: data)
+    }
+    
     //MARK: - Emoji
     //These are the emoji added to the canvas
     struct Emoji: Identifiable, Hashable, Codable {
