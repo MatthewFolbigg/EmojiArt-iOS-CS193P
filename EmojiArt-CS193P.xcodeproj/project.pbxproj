@@ -17,6 +17,7 @@
 		1FA170E0268A4625008561F0 /* UtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170DE268A4625008561F0 /* UtilityExtensions.swift */; };
 		1FA170E1268A4625008561F0 /* UtilityViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170DF268A4625008561F0 /* UtilityViews.swift */; };
 		1FA170E4268BB384008561F0 /* Selectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E3268BB384008561F0 /* Selectable.swift */; };
+		1FA170E62691E0B9008561F0 /* PaletteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E52691E0B9008561F0 /* PaletteStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		1FA170DE268A4625008561F0 /* UtilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityExtensions.swift; sourceTree = "<group>"; };
 		1FA170DF268A4625008561F0 /* UtilityViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityViews.swift; sourceTree = "<group>"; };
 		1FA170E3268BB384008561F0 /* Selectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selectable.swift; sourceTree = "<group>"; };
+		1FA170E52691E0B9008561F0 /* PaletteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				1FA170D6268A365D008561F0 /* EmojiArtModel.swift */,
+				1FA170E52691E0B9008561F0 /* PaletteStore.swift */,
 				1FA170D8268A3940008561F0 /* EmojiArtModel.Background.swift */,
 			);
 			path = Model;
@@ -184,6 +187,7 @@
 				1FA170CA268A363E008561F0 /* EmojiArtDocumentView.swift in Sources */,
 				1FA170E4268BB384008561F0 /* Selectable.swift in Sources */,
 				1FA170C8268A363E008561F0 /* EmojiArt_CS193PApp.swift in Sources */,
+				1FA170E62691E0B9008561F0 /* PaletteStore.swift in Sources */,
 				1FA170E0268A4625008561F0 /* UtilityExtensions.swift in Sources */,
 				1FA170DC268A397C008561F0 /* EmojiArtDocument.swift in Sources */,
 				1FA170D7268A365D008561F0 /* EmojiArtModel.swift in Sources */,
