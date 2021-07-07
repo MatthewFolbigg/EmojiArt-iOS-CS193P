@@ -50,6 +50,7 @@ class PaletteStore: ObservableObject {
         restoreFromUserDefaults()
         if palettes.isEmpty {
             insetPalette(named: "Sports", emojis: "⚽️🏀🏈⚾️🥎🎾🏐🏉🥏🎱🪀🏓🏸🏒🏑🥍🏏🪃🥅⛳️🏹🎣🥊🥋🛹⛷🏂🪂🏄‍♂️🧗‍♀️")
+            insetPalette(named: "Music", emojis: "🎧🎷🎺🎸🪕🎻🥁🎹🎼🎤🪘")
         } else {
             print("Loaded Palettes from user defaults")
         }

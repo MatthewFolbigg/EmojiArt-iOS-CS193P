@@ -10,13 +10,12 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     
     @ObservedObject var document: EmojiArtDocument
-    let testEmojis = "📺🔭🐮🛩🛴🎙"
     let defaultEmojiFontSize: CGFloat = 40
     
     var body: some View {
         VStack(spacing: 0) {
             documentBody
-            palette
+            PaletteChooserView(emojiFontSize: defaultEmojiFontSize)
         }
     }
 
@@ -43,6 +42,7 @@ struct EmojiArtDocumentView: View {
                             .simultaneousGesture(deleteGesture(emoji: emoji))
                             .position(position(for: emoji, in: geometry))
                         }
+                    .clipped()
                 }
             }
             .onDrop(of: [.plainText, .url, .image], isTargeted: nil) { providers, location in
@@ -272,13 +272,6 @@ struct EmojiArtDocumentView: View {
                 }
             }
     }
-    
-    //MARK: - Emoji Palette
-    var palette: some View {
-        ScrollingEmojisView(emojis: testEmojis)
-            .font(.system(size: defaultEmojiFontSize))
-    }
-    
 }
 
 
@@ -292,21 +285,7 @@ struct backgroundImage: View {
     }
 }
 
-struct ScrollingEmojisView: View {
-    let emojis: String
-    
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(emojis.map { String($0) }, id: \.self) { emoji in
-                    Text(emoji)
-                        .onDrag { NSItemProvider(object: emoji as NSString) }
-                }
-            }
-        }
-    }
-    
-}
+
 
 
 
