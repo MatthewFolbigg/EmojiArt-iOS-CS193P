@@ -35,8 +35,39 @@ struct PaletteChooserView: View {
             Image(systemName: "paintpalette")
         }
         .font(emojiFont)
+        .contextMenu { contextMenu }
     }
     
+    @ViewBuilder
+    var contextMenu: some View {
+        AnimatedActionButton(title: "Edit", systemImage: "pencil") {
+            paletteToEdit = store.palette(at: currentPaletteIndex)
+        }
+        AnimatedActionButton(title: "New", systemImage: "plus") {
+            store.insetPalette(named: "New", emojis: "", at: currentPaletteIndex)
+            paletteToEdit = store.palette(at: currentPaletteIndex)
+        }
+        AnimatedActionButton(title: "Delete", systemImage: "minus.circle") {
+            currentPaletteIndex = store.removePalette(at: currentPaletteIndex)
+        }
+        goToMenuItem
+    }
+    
+    var goToMenuItem: some View {
+        Menu {
+            ForEach(store.palettes) { palette in
+                AnimatedActionButton(title: palette.name) {
+                    if let index = store.palettes.firstIndex(where: { $0.id == palette.id} ) {
+                        currentPaletteIndex = index
+                    }
+                }
+            }
+        } label: {
+            Label("Go To", systemImage: "text.insert")
+        }
+    }
+    
+    //MARK:- Body
     func body(for palette: Palette) -> some View {
         HStack {
             Text(palette.name)
@@ -45,7 +76,11 @@ struct PaletteChooserView: View {
         }
         .id(palette.id)
         .transition(rollTrasitions)
+        .popover(item: $paletteToEdit, content: { palette in
+            paletteEditorView(palette: $store.palettes[currentPaletteIndex])
+        })
     }
+    @State private var paletteToEdit: Palette?
     
     var rollTrasitions: AnyTransition {
         AnyTransition.asymmetric(insertion: .offset(x: 0, y: emojiFontSize * 2), removal: .offset(x: 0, y: -emojiFontSize * 2))
@@ -65,9 +100,7 @@ struct ScrollingEmojisView: View {
             }
         }
     }
-    
 }
-
 
 
 
