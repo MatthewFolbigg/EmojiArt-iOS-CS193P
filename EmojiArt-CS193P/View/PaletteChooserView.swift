@@ -50,6 +50,9 @@ struct PaletteChooserView: View {
         AnimatedActionButton(title: "Delete", systemImage: "minus.circle") {
             currentPaletteIndex = store.removePalette(at: currentPaletteIndex)
         }
+        AnimatedActionButton(title: "Manage Palettes", systemImage: "slider.vertical.3") {
+            isManagingPalettes = true
+        }
         goToMenuItem
     }
     
@@ -77,10 +80,15 @@ struct PaletteChooserView: View {
         .id(palette.id)
         .transition(rollTrasitions)
         .popover(item: $paletteToEdit, content: { palette in
-            paletteEditorView(palette: $store.palettes[currentPaletteIndex])
+            PaletteEditorView(palette: $store.palettes[currentPaletteIndex])
         })
+        .sheet(isPresented: $isManagingPalettes) {
+            PaletteManagerView()
+        }
     }
+    
     @State private var paletteToEdit: Palette?
+    @State private var isManagingPalettes: Bool = false
     
     var rollTrasitions: AnyTransition {
         AnyTransition.asymmetric(insertion: .offset(x: 0, y: emojiFontSize * 2), removal: .offset(x: 0, y: -emojiFontSize * 2))

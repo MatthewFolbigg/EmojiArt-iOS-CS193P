@@ -19,7 +19,8 @@
 		1FA170E4268BB384008561F0 /* Selectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E3268BB384008561F0 /* Selectable.swift */; };
 		1FA170E62691E0B9008561F0 /* PaletteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E52691E0B9008561F0 /* PaletteStore.swift */; };
 		1FA170E82695CED0008561F0 /* PaletteChooserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E72695CED0008561F0 /* PaletteChooserView.swift */; };
-		1FA170EA2697448F008561F0 /* paletteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E92697448F008561F0 /* paletteEditorView.swift */; };
+		1FA170EA2697448F008561F0 /* PaletteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E92697448F008561F0 /* PaletteEditorView.swift */; };
+		1FA170EC26A72204008561F0 /* PaletteManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170EB26A72204008561F0 /* PaletteManagerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,7 +38,8 @@
 		1FA170E3268BB384008561F0 /* Selectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selectable.swift; sourceTree = "<group>"; };
 		1FA170E52691E0B9008561F0 /* PaletteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteStore.swift; sourceTree = "<group>"; };
 		1FA170E72695CED0008561F0 /* PaletteChooserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteChooserView.swift; sourceTree = "<group>"; };
-		1FA170E92697448F008561F0 /* paletteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paletteEditorView.swift; sourceTree = "<group>"; };
+		1FA170E92697448F008561F0 /* PaletteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteEditorView.swift; sourceTree = "<group>"; };
+		1FA170EB26A72204008561F0 /* PaletteManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteManagerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +107,8 @@
 			children = (
 				1FA170C9268A363E008561F0 /* EmojiArtDocumentView.swift */,
 				1FA170E72695CED0008561F0 /* PaletteChooserView.swift */,
-				1FA170E92697448F008561F0 /* paletteEditorView.swift */,
+				1FA170EB26A72204008561F0 /* PaletteManagerView.swift */,
+				1FA170E92697448F008561F0 /* PaletteEditorView.swift */,
 				1FA170E3268BB384008561F0 /* Selectable.swift */,
 			);
 			path = View;
@@ -189,8 +192,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FA170EC26A72204008561F0 /* PaletteManagerView.swift in Sources */,
 				1FA170E1268A4625008561F0 /* UtilityViews.swift in Sources */,
-				1FA170EA2697448F008561F0 /* paletteEditorView.swift in Sources */,
+				1FA170EA2697448F008561F0 /* PaletteEditorView.swift in Sources */,
 				1FA170CA268A363E008561F0 /* EmojiArtDocumentView.swift in Sources */,
 				1FA170E82695CED0008561F0 /* PaletteChooserView.swift in Sources */,
 				1FA170E4268BB384008561F0 /* Selectable.swift in Sources */,

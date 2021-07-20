@@ -58,6 +58,14 @@ class PaletteStore: ObservableObject {
     
     //MARK: - Intents
     
+    func index(for palette: Palette) -> Int? {
+        if let index = palettes.firstIndex(where: { $0.id == palette.id }) {
+            return index
+        } else {
+            return nil
+        }
+    }
+    
     func palette(at index: Int) -> Palette {
         //Will alway return a palette even if an out of bounds index is provided.
         let safeIndex = min(max(index, 0), palettes.count - 1)

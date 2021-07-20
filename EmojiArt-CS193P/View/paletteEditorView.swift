@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct paletteEditorView: View {
+struct PaletteEditorView: View {
     
     @Binding var palette: Palette
     
@@ -17,6 +17,7 @@ struct paletteEditorView: View {
             addEmojiSection
             removeEmojiSection
         }
+        .navigationTitle("Edit \(palette.name)")
         .frame(minWidth: 300, minHeight: 400)
     }
     
@@ -28,7 +29,7 @@ struct paletteEditorView: View {
     
     @State private var emojisToAdd = ""
     var addEmojiSection: some View {
-        Section(header: Text("Add Emojis")) {
+        Section(header: Text("Add Emoji")) {
             TextField("", text: $emojisToAdd)
                 .onChange(of: emojisToAdd, perform: { emojis in
                     addEmojis(emojis)
@@ -37,7 +38,7 @@ struct paletteEditorView: View {
     }
     
     var removeEmojiSection: some View {
-        Section(header: Text("Remove Emojis")) {
+        Section(header: Text("Remove Emoji")) {
             let emojis = palette.emojis.map { String($0) }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
                 ForEach(emojis, id: \.self) { emoji in
@@ -71,7 +72,7 @@ struct paletteEditorView: View {
 
 struct paletteEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        paletteEditorView(palette: .constant(PaletteStore(named: "Testing").palette(at: 0)))
-            .previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/300.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/350.0/*@END_MENU_TOKEN@*/))
+        PaletteEditorView(palette: .constant(PaletteStore(named: "Testing").palette(at: 0)))
+            .previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/300.0/*@END_MENU_TOKEN@*/, height: 400))
     }
 }
