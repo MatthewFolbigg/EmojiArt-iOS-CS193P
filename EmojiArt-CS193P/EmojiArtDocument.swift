@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 class EmojiArtDocument: ObservableObject {
     @Published private(set) var emojiArt: EmojiArtModel {
@@ -85,24 +86,38 @@ class EmojiArtDocument: ObservableObject {
         case failed(URL)
     }
     
+    private var backgroundImageFetchCancellable: AnyCancellable?
+    
     private func fetchBackgroundImageData() {
         backgroundImage = nil
         switch emojiArt.background {
         case .url(let url):
             backgroundImageFetchStatus = .fetching
-            DispatchQueue.global(qos: .userInitiated).async {
-                if let imageData = try? Data(contentsOf: url) {
-                    DispatchQueue.main.async { [weak self] in
-                        self?.backgroundImageFetchStatus = .idle
-                        if self?.emojiArt.background == EmojiArtModel.Background.url(url) {
-                            self?.backgroundImage = UIImage(data: imageData)
-                        }
-                        if self?.backgroundImage == nil {
-                            self?.backgroundImageFetchStatus = .failed(url)
-                        }
-                    }
-                }
-            }
+            backgroundImageFetchCancellable?.cancel()
+            let session = URLSession.shared
+            let publisher = session.dataTaskPublisher(for: url)
+                .map { (data, urlResponse) in UIImage(data: data) }
+                .replaceError(with: nil)
+                .receive(on: DispatchQueue.main)
+            backgroundImageFetchCancellable = publisher
+                .sink(receiveValue: { [weak self] image in
+                        self?.backgroundImageFetchStatus = image != nil ? .idle : .failed(url)
+                        self?.backgroundImage = image
+                })
+            
+//            DispatchQueue.global(qos: .userInitiated).async {
+//                if let imageData = try? Data(contentsOf: url) {
+//                    DispatchQueue.main.async { [weak self] in
+//                        self?.backgroundImageFetchStatus = .idle
+//                        if self?.emojiArt.background == EmojiArtModel.Background.url(url) {
+//                            self?.backgroundImage = UIImage(data: imageData)
+//                        }
+//                        if self?.backgroundImage == nil {
+//                            self?.backgroundImageFetchStatus = .failed(url)
+//                        }
+//                    }
+//                }
+//            }
         case .imageData(let data): backgroundImage = UIImage(data: data)
         case .blank: break
         }
@@ -123,7 +138,7 @@ class EmojiArtDocument: ObservableObject {
     }
     
     func moveEmoji(_ emoji: EmojiArtModel.Emoji, by offset: CGSize) {
-        if let index = emojiArt.emojis.firstIndex(where: { $0.id == emoji.id } ) {
+        if let index = emojiArt.emojis.firstIndex(where: { storedEmoji in storedEmoji.id == emoji.id } ) {
             emojiArt.emojis[index].x += Int(offset.width)
             emojiArt.emojis[index].y += Int(offset.height)
         }

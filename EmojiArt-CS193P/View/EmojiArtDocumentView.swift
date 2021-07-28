@@ -59,6 +59,9 @@ struct EmojiArtDocumentView: View {
                 default: break
                 }
             }
+            .onReceive(document.$backgroundImage, perform: { image in
+                zoomToFit(image, in: geometry.size)
+            })
         }
     }
     
