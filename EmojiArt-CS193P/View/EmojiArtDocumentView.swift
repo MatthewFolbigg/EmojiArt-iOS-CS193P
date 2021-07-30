@@ -10,6 +10,7 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     
     @ObservedObject var document: EmojiArtDocument
+    @Environment(\.undoManager) var undoManager
     let defaultEmojiFontSize: CGFloat = 40
     
     var body: some View {
@@ -60,10 +61,27 @@ struct EmojiArtDocumentView: View {
                 }
             }
             .onReceive(document.$backgroundImage, perform: { image in
-                zoomToFit(image, in: geometry.size)
+                if shouldAutoZoom {
+                    print("AutoZoom")
+                    zoomToFit(image, in: geometry.size)
+                }
             })
+            .toolbar {
+                ToolbarItem {
+                    Button(action: { undoManager?.undo() }) {
+                        Image(systemName: "arrow.uturn.backward.circle")
+                    }.disabled(!(undoManager?.canUndo ?? false))
+                }
+                ToolbarItem {
+                    Button(action: { undoManager?.redo() }) {
+                        Image(systemName: "arrow.uturn.forward.circle")
+                    }.disabled(!(undoManager?.canRedo ?? false))
+                }
+            }
         }
     }
+    
+    @State private var shouldAutoZoom = false
     
     //MARK: - Alerts
     @State private var alertToShow: IdentifiableAlert?
@@ -82,12 +100,13 @@ struct EmojiArtDocumentView: View {
     private func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
         var found = false
         found = providers.loadObjects(ofType: URL.self) { url in
-            document.setBackground(.url(url.imageURL))
+            shouldAutoZoom = true
+            document.setBackground(.url(url.imageURL), undoManger: undoManager)
         }
         if !found {
             found = providers.loadObjects(ofType: UIImage.self) { image in
                 if let data = image.jpegData(compressionQuality: 1.0) {
-                    document.setBackground(.imageData(data))
+                    document.setBackground(.imageData(data), undoManger: undoManager)
                 }
             }
         }
@@ -97,7 +116,8 @@ struct EmojiArtDocumentView: View {
                     document.addEmoji(
                         String(emoji),
                         at: convertToEmojiCoords(location, in: geometry),
-                        size: defaultEmojiFontSize / zoomScale
+                        size: defaultEmojiFontSize / zoomScale,
+                        undoManger: undoManager
                     )
                 }
             }
@@ -183,11 +203,11 @@ struct EmojiArtDocumentView: View {
     private func deleteGesture(emoji: EmojiArtModel.Emoji) -> some Gesture {
         TapGesture(count: 2)
             .onEnded { _ in
-                document.removeEmoji(emoji)
+                document.removeEmoji(emoji, undoManger: undoManager)
             }
     }
     
-    @State var emojiGesturePanOffset: CGSize = CGSize.zero
+    @SceneStorage("EmojiArtDocument.emojiGesturePanOffset") var emojiGesturePanOffset: CGSize = CGSize.zero
     
     private func dragEmojiGesture(id: Int) -> some Gesture {
         DragGesture()
@@ -195,12 +215,12 @@ struct EmojiArtDocumentView: View {
                 if !selectedEmoji.isEmpty && selectedEmoji.contains(id) {
                     for emojiId in selectedEmoji {
                         if let emoji = document.emojis.first(where: { $0.id == emojiId }) {
-                            document.moveEmoji(emoji, by: endValue.translation)
+                            document.moveEmoji(emoji, by: endValue.translation, undoManger: undoManager)
                         }
                     }
                 } else {
                     if let emoji = document.emojis.first(where: { $0.id == id }) {
-                        document.moveEmoji(emoji, by: endValue.translation)
+                        document.moveEmoji(emoji, by: endValue.translation, undoManger: undoManager)
                     }
                 }
             }
@@ -208,12 +228,12 @@ struct EmojiArtDocumentView: View {
                 if !selectedEmoji.isEmpty && selectedEmoji.contains(id) {
                     for emojiId in selectedEmoji {
                         if let emoji = document.emojis.first(where: { $0.id == emojiId }) {
-                            document.moveEmoji(emoji, by: dragValue.translation)
+                            document.moveEmoji(emoji, by: dragValue.translation, undoManger: undoManager)
                         }
                     }
                 } else {
                     if let emoji = document.emojis.first(where: { $0.id == id }) {
-                        document.moveEmoji(emoji, by: dragValue.translation)
+                        document.moveEmoji(emoji, by: dragValue.translation, undoManger: undoManager)
                     }
                 }
             })
@@ -230,7 +250,7 @@ struct EmojiArtDocumentView: View {
     }
     
     //MARK: - Background Gestures
-    @State private var idleZoomScale: CGFloat = 1
+    @SceneStorage("EmojiArtDocument.zoomScale") private var idleZoomScale: CGFloat = 1
     @GestureState private var pinchGestureZoomScale: CGFloat = 1
     @GestureState private var emojiPinchGestureZoomScale: CGFloat = 1
         
@@ -238,7 +258,7 @@ struct EmojiArtDocumentView: View {
         idleZoomScale * pinchGestureZoomScale
     }
     
-    @State private var idlePanOffset: CGSize = CGSize.zero
+    @SceneStorage("EmojiArtDocument.panOffset") private var idlePanOffset: CGSize = CGSize.zero
     @GestureState private var gesturePanOffset: CGSize = CGSize.zero
     
     private var panOffset: CGSize {
@@ -274,7 +294,7 @@ struct EmojiArtDocumentView: View {
                     .onEnded { finalGestureScale in
                         for emojiId in selectedEmoji {
                             if let emoji = document.emojis.first(where: { $0.id == emojiId }) {
-                                document.scaleEmoji(emoji, by: finalGestureScale)
+                                document.scaleEmoji(emoji, by: finalGestureScale, undoManger: undoManager)
                             }
                         }
                     }

@@ -9,12 +9,19 @@ import SwiftUI
 
 @main
 struct EmojiArt_CS193PApp: App {
-    @StateObject var document = EmojiArtDocument()
+//    @StateObject var document = EmojiArtDocument()
     @StateObject var paletteStore = PaletteStore(named: "Default")
     
+//    var body: some Scene {
+//        WindowGroup {
+//            EmojiArtDocumentView(document: document)
+//                .environmentObject(paletteStore)
+//        }
+//    }
+    
     var body: some Scene {
-        WindowGroup {
-            EmojiArtDocumentView(document: document)
+        DocumentGroup(newDocument: { EmojiArtDocument() }) { config in
+            EmojiArtDocumentView(document: config.document)
                 .environmentObject(paletteStore)
         }
     }

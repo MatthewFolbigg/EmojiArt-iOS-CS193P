@@ -14,7 +14,7 @@ struct PaletteChooserView: View {
     let testEmojis = "📺🔭🐮🛩🛴🎙"
     
     @EnvironmentObject var store: PaletteStore
-    @State private var currentPaletteIndex: Int = 0
+    @SceneStorage("paletteChooser.paletteIndex") private var currentPaletteIndex: Int = 0
     
     var body: some View {
         let palette = store.palette(at: currentPaletteIndex)
