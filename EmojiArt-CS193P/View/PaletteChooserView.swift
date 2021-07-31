@@ -79,9 +79,12 @@ struct PaletteChooserView: View {
         }
         .id(palette.id)
         .transition(rollTrasitions)
-        .popover(item: $paletteToEdit, content: { palette in
+        .popover(item: $paletteToEdit) { palette in
             PaletteEditorView(palette: $store.palettes[currentPaletteIndex])
-        })
+                .wrappedInNavigationViewToEnableDismissal() {
+                    paletteToEdit = nil
+                }
+        }
         .sheet(isPresented: $isManagingPalettes) {
             PaletteManagerView()
         }
@@ -109,9 +112,6 @@ struct ScrollingEmojisView: View {
         }
     }
 }
-
-
-
 
 //struct PaletteChooserView_Previews: PreviewProvider {
 //    static var previews: some View {

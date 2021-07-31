@@ -21,6 +21,7 @@
 		1FA170E82695CED0008561F0 /* PaletteChooserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E72695CED0008561F0 /* PaletteChooserView.swift */; };
 		1FA170EA2697448F008561F0 /* PaletteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170E92697448F008561F0 /* PaletteEditorView.swift */; };
 		1FA170EC26A72204008561F0 /* PaletteManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA170EB26A72204008561F0 /* PaletteManagerView.swift */; };
+		1FD4501226B588A100A77325 /* View+Dismissable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD4501126B588A100A77325 /* View+Dismissable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		1FA170E72695CED0008561F0 /* PaletteChooserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteChooserView.swift; sourceTree = "<group>"; };
 		1FA170E92697448F008561F0 /* PaletteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteEditorView.swift; sourceTree = "<group>"; };
 		1FA170EB26A72204008561F0 /* PaletteManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteManagerView.swift; sourceTree = "<group>"; };
+		1FD4501126B588A100A77325 /* View+Dismissable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Dismissable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				1FA170EB26A72204008561F0 /* PaletteManagerView.swift */,
 				1FA170E92697448F008561F0 /* PaletteEditorView.swift */,
 				1FA170E3268BB384008561F0 /* Selectable.swift */,
+				1FD4501126B588A100A77325 /* View+Dismissable.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 				1FA170CA268A363E008561F0 /* EmojiArtDocumentView.swift in Sources */,
 				1FA170E82695CED0008561F0 /* PaletteChooserView.swift in Sources */,
 				1FA170E4268BB384008561F0 /* Selectable.swift in Sources */,
+				1FD4501226B588A100A77325 /* View+Dismissable.swift in Sources */,
 				1FA170C8268A363E008561F0 /* EmojiArt_CS193PApp.swift in Sources */,
 				1FA170E62691E0B9008561F0 /* PaletteStore.swift in Sources */,
 				1FA170E0268A4625008561F0 /* UtilityExtensions.swift in Sources */,
